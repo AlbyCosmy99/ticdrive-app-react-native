@@ -19,7 +19,7 @@ import {
   GestureResponderEvent,
   PanResponderGestureState,
 } from 'react-native';
-import {Calendar} from 'react-native-calendars';
+import {Calendar, LocaleConfig} from 'react-native-calendars';
 import TicDriveButton from '../buttons/TicDriveButton';
 import {Colors} from '@/constants/Colors';
 import AuthContext from '@/stateManagement/contexts/auth/AuthContext';
@@ -45,6 +45,96 @@ import {
 } from '@/stateManagement/redux/slices/bookingSlice';
 
 const {height} = Dimensions.get('window');
+
+LocaleConfig.locales.it = {
+  monthNames: [
+    'Gennaio',
+    'Febbraio',
+    'Marzo',
+    'Aprile',
+    'Maggio',
+    'Giugno',
+    'Luglio',
+    'Agosto',
+    'Settembre',
+    'Ottobre',
+    'Novembre',
+    'Dicembre',
+  ],
+  monthNamesShort: [
+    'Gen',
+    'Feb',
+    'Mar',
+    'Apr',
+    'Mag',
+    'Giu',
+    'Lug',
+    'Ago',
+    'Set',
+    'Ott',
+    'Nov',
+    'Dic',
+  ],
+  dayNames: [
+    'Domenica',
+    'Lunedì',
+    'Martedì',
+    'Mercoledì',
+    'Giovedì',
+    'Venerdì',
+    'Sabato',
+  ],
+  dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab'],
+  today: 'Oggi',
+};
+
+LocaleConfig.locales.en = {
+  monthNames: [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ],
+  monthNamesShort: [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ],
+  dayNames: [
+    'Sunday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+  ],
+  dayNamesShort: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+  today: 'Today',
+};
+
+const getCalendarLocale = (languageCode: string) =>
+  languageCode?.toLowerCase().startsWith('it') ? 'it' : 'en';
+
+const capitalize = (value: string) =>
+  value.charAt(0).toUpperCase() + value.slice(1);
 
 export interface UserCalendarModalRef {
   openModal: (service?: Service) => void;
@@ -74,6 +164,7 @@ const UserCalendarModal = forwardRef<
   const car = useAppSelector(state => state.booking.car);
   const {t} = useTranslation();
   const languageCode = useAppSelector(state => state.language.languageCode);
+  const calendarLocale = getCalendarLocale(languageCode);
   const [
     serviceSelectedFromWorkshopDetails,
     setServiceSelectedFromWorkshopDetails,
@@ -109,6 +200,10 @@ const UserCalendarModal = forwardRef<
   );
 
   const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    LocaleConfig.defaultLocale = calendarLocale;
+  }, [calendarLocale]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -210,17 +305,14 @@ const UserCalendarModal = forwardRef<
       );
     }
 
-    const formattedDate = new Date(selectedDate).toLocaleDateString(
-      languageCode,
-      {
+    const capitalizedDate = capitalize(
+      new Date(selectedDate).toLocaleDateString(calendarLocale, {
         weekday: 'long',
-        month: 'long',
         day: 'numeric',
-      },
+        month: 'long',
+        year: 'numeric',
+      }),
     );
-
-    const capitalizedDate =
-      formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
 
     const formattedTime = `${capitalizedDate} - ${selectedTime}`;
 
@@ -347,6 +439,33 @@ const UserCalendarModal = forwardRef<
                       </View>
                       <View style={styles.fixedCalendarContainer}>
                         <Calendar
+                          firstDay={1}
+                          monthFormat="MMMM yyyy"
+                          renderHeader={date => {
+                            if (!date) {
+                              return null;
+                            }
+
+                            const formattedHeader = capitalize(
+                              new Date(
+                                date.getFullYear(),
+                                date.getMonth(),
+                                1,
+                              ).toLocaleDateString(calendarLocale, {
+                                month: 'long',
+                                year: 'numeric',
+                              }),
+                            );
+
+                            return (
+                              <Text
+                                style={styles.calendarHeaderText}
+                                allowFontScaling={false}
+                              >
+                                {formattedHeader}
+                              </Text>
+                            );
+                          }}
                           onDayPress={async (day: ExtendedDay) => {
                             const date = new Date(day.dateString);
                             const dayOfWeek = new Date(day.dateString)
@@ -414,20 +533,20 @@ const UserCalendarModal = forwardRef<
                         selectedDate && (
                           <>
                             <Text
-                              style={{
-                                fontWeight: '600',
-                                color: Colors.light.green.drive,
-                              }}
+                              style={styles.selectedDateText}
                               allowFontScaling={false}
-                              className="text-xl"
                             >
-                              {new Date(selectedDate)
-                                .toLocaleDateString(languageCode, {
-                                  weekday: 'long',
-                                  month: 'long',
-                                  day: 'numeric',
-                                })
-                                .toUpperCase()}
+                              {capitalize(
+                                new Date(selectedDate).toLocaleDateString(
+                                  calendarLocale,
+                                  {
+                                    weekday: 'long',
+                                    day: 'numeric',
+                                    month: 'long',
+                                    year: 'numeric',
+                                  },
+                                ),
+                              )}
                             </Text>
                             <TouchableOpacity
                               onPress={() => setSelectedDate(null)}
@@ -569,9 +688,22 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ddd',
   },
+  calendarHeaderText: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#243042',
+    textAlign: 'center',
+    paddingVertical: 4,
+  },
   noticeWrapper: {
     marginTop: 12,
     paddingHorizontal: 10,
+  },
+  selectedDateText: {
+    fontSize: 22,
+    fontWeight: '600',
+    color: Colors.light.green.drive,
+    textAlign: 'center',
   },
   noticeText: {
     textAlign: 'center',
