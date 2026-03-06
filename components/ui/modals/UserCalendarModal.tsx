@@ -373,7 +373,7 @@ const UserCalendarModal = forwardRef<
                                 dayName,
                               );
                             setaLoadingHours(false);
-                            setWorkingHours(workingHoursData.data);
+                            setWorkingHours(workingHoursData.data[0] ?? null);
 
                             if (selectedDate === day.dateString) {
                               setSelectedDate(null);

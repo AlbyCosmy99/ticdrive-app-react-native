@@ -105,7 +105,6 @@ export default function ReviewBookingDetailsScreen() {
         car,
         user?.name,
       );
-      console.log('time', time);
       const res2 = await bookAServiceAsync(
         token ?? '',
         workshop?.id ?? '',

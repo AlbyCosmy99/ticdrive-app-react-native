@@ -1,0 +1,13 @@
+diff --git a/node_modules/react-native-map-clustering/lib/ClusteredMapView.js b/node_modules/react-native-map-clustering/lib/ClusteredMapView.js
+index 9e44320..5d03feb 100644
+--- a/node_modules/react-native-map-clustering/lib/ClusteredMapView.js
++++ b/node_modules/react-native-map-clustering/lib/ClusteredMapView.js
+@@ -177,7 +177,7 @@ const ClusteredMapView = forwardRef(
+         ref={(map) => {
+           mapRef.current = map;
+           if (ref) ref.current = map;
+-          restProps.mapRef(map);
++          if (typeof restProps.mapRef === 'function') restProps.mapRef(map);
+         }}
+         onRegionChangeComplete={_onRegionChangeComplete}
+       >

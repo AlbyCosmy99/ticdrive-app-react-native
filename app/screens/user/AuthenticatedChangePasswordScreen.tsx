@@ -5,7 +5,7 @@ import TicDriveInput from '@/components/ui/inputs/TicDriveInput';
 import TicDriveSpinner from '@/components/ui/spinners/TicDriveSpinner';
 import VisibilityOffIcon from '@/assets/svg/access/visibility_off.svg';
 import VisibilityOnIcon from '@/assets/svg/access/visibility_on.svg';
-import TicDriveModal from 'ticdrive-mobile/components/ui/modals/TicDriveModal';
+import TicDriveModal from '@/components/ui/modals/TicDriveModal';
 import axiosClient from '@/services/http/axiosClient';
 import useGlobalErrors from '@/hooks/errors/useGlobalErrors';
 import useTicDriveNavigation from '@/hooks/navigation/useTicDriveNavigation';

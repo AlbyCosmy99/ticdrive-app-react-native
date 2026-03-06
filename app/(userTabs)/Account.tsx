@@ -36,7 +36,7 @@ import EditIcon from '@/assets/svg/writing/change.svg';
 import SaveIcon from '@/assets/svg/operations/save.svg';
 import DangerIcon from '@/assets/svg/danger.svg';
 
-import TicDriveModal from 'ticdrive-mobile/components/ui/modals/TicDriveModal';
+import TicDriveModal from '@/components/ui/modals/TicDriveModal';
 import {setLanguageCode} from '@/stateManagement/redux/slices/languageSlice';
 import i18n from '@/i18n';
 import {t} from 'i18next';

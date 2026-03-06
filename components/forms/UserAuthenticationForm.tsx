@@ -88,7 +88,6 @@ const UserAuthenticationForm: React.FC<UserAuthenticationFormProps> = ({
         setLoading(true);
 
         //login
-        console.log(user);
         const res = await onLogin(user);
         if (res) {
           if (res.emailConfirmed) {
@@ -105,7 +104,6 @@ const UserAuthenticationForm: React.FC<UserAuthenticationFormProps> = ({
           }
         }
       } catch (err: any) {
-        alert('errore');
         setErrorMessage(
           err.message?.length > 0 ? err.message[0].description : err.message,
         );

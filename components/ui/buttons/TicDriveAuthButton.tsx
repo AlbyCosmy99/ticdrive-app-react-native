@@ -4,7 +4,7 @@ import navigationPush from '@/services/navigation/push';
 import navigationReplace from '@/services/navigation/replace';
 import {useAppDispatch} from '@/stateManagement/redux/hooks';
 import {logout} from '@/stateManagement/redux/slices/authSlice';
-import {setService} from '@/stateManagement/redux/slices/bookingSlice';
+import {setServices} from '@/stateManagement/redux/slices/bookingSlice';
 import AuthAction from '@/types/auth/Action';
 import {Entypo} from '@expo/vector-icons';
 import React, {useState} from 'react';
@@ -23,7 +23,7 @@ export const handleLogout = async (
   await removeSecureToken();
   navigationReplace(navigation, 'Hub');
   dispatch(logout());
-  dispatch(setService(undefined));
+  dispatch(setServices([]));
 };
 
 const TicDriveAuthButton: React.FC<TicDriveAuthButtonProps> = ({
