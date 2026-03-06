@@ -1,5 +1,5 @@
 import {View} from 'react-native';
-import {useContext, useEffect, useRef} from 'react';
+import {useContext, useEffect} from 'react';
 import {
   login,
   logout,
@@ -12,18 +12,18 @@ import NavigationContext from '@/stateManagement/contexts/nav/NavigationContext'
 import navigationReset from '@/services/navigation/reset';
 import {getToken} from '@/services/auth/secureStore/getToken';
 import {removeSecureToken} from '@/services/auth/secureStore/setToken';
-import navigationPush from '@/services/navigation/push';
 import i18n from '@/i18n';
 import TicDriveSpinner from '@/components/ui/spinners/TicDriveSpinner';
 import getUserData from '@/services/http/requests/auth/getUserData';
 import formatUserData from '@/utils/auth/formatUserData';
+
+let hasHiddenSplashScreen = false;
 
 const Hub = () => {
   const dispatch = useAppDispatch();
   const navigation = useNavigation();
   const {setNavigation} = useContext(NavigationContext);
 
-  let user = useAppSelector(state => state.auth.user);
   const languageCode = useAppSelector(state => state.language.languageCode);
 
   useEffect(() => {
@@ -62,12 +62,18 @@ const Hub = () => {
         } else {
           navigationReset(navigation, 0, 'userTabs', {animation: 'fade'});
         }
-
-        setTimeout(() => {
-          SplashScreen.hideAsync();
-        }, 200);
       } catch (error) {
         console.error('Error checking auth status: ', error);
+      } finally {
+        if (!hasHiddenSplashScreen) {
+          hasHiddenSplashScreen = true;
+
+          setTimeout(() => {
+            SplashScreen.hideAsync().catch(error => {
+              console.warn('Unable to hide splash screen:', error);
+            });
+          }, 200);
+        }
       }
     };
     checkAuth();
